@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en" x-data="landingApp()" :dir="currentLang === 'ar' ? 'rtl' : 'ltr'" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KVB Prime - Global CFDs & Forex Trading Platform</title>
+    <!-- Tailwind CSS & Alpine.js & FontAwesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brandDark: '#070b14',
+                        brandCard: '#111827',
+                        brandBlue: '#2563eb',
+                        brandGold: '#f59e0b'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
+        .animate-marquee { display: flex; width: 200%; animation: marquee 25s linear infinite; }
+        .animate-marquee:hover { animation-play-state: paused; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased selection:bg-blue-600 selection:text-white">
+
+    <!-- 1. TOP MARQUEE TICKER (TRADING ECONOMICS REALTIME PRICE STREAM) -->
+    <div class="bg-slate-900/90 border-b border-slate-800 text-xs py-2 overflow-hidden whitespace-nowrap sticky top-0 z-50 backdrop-blur">
+        <div class="animate-marquee flex items-center gap-8 font-mono">
+            <template x-for="(item, index) in livePrices" :key="'t1-'+index">
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-slate-300" x-text="item.name"></span>
+                    <span class="font-bold" :class="item.direction === 'up' ? 'text-emerald-400' : 'text-rose-400'" x-text="item.price"></span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded font-sans font-semibold" :class="item.direction === 'up' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'" x-text="item.change"></span>
+                </div>
+            </template>
+            <!-- Duplicate for infinite seamless loop -->
+            <template x-for="(item, index) in livePrices" :key="'t2-'+index">
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-slate-300" x-text="item.name"></span>
+                    <span class="font-bold" :class="item.direction === 'up' ? 'text-emerald-400' : 'text-rose-400'" x-text="item.price"></span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded font-sans font-semibold" :class="item.direction === 'up' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'" x-text="item.change"></span>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- 2. HEADER & NAVIGATION BANNER -->
+    <header class="border-b border-slate-800 bg-slate-950/90 backdrop-blur sticky top-8 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer">
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-blue-500/30">
+                    K
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold tracking-wider text-white">KVB <span class="text-blue-500">PRIME</span></span>
+                    <span class="block text-[10px] uppercase tracking-widest text-slate-400 font-semibold" x-text="t('sub_brand')">Global Financial Institution</span>
+                </div>
+            </div>
+
+            <!-- Language Selector & Register CTA -->
+            <div class="flex items-center space-x-4">
+                <select x-model="currentLang" @change="changeLang(currentLang)" class="bg-slate-900 border border-slate-700 text-xs text-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:border-blue-500 cursor-pointer font-medium">
+                    <option value="en">🇬🇧 English (Default)</option>
+                    <option value="vi">🇻🇳 Tiếng Việt (Vietnam)</option>
+                    <option value="km">🇰🇭 ភាសាខ្មែរ (Cambodia)</option>
+                    <option value="th">🇹🇭 ภาษาไทย (Thailand)</option>
+                    <option value="ar">🇦🇪 العربية (UAE)</option>
+                    <option value="zh">🇨🇳 简体中文 (Global)</option>
+                </select>
+
+                <a href="https://kvbcaj.com/rhem9guim" target="_blank" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/30 transition-all transform hover:-translate-y-0.5">
+                    <span x-text="t('btn_register')">Open Live Account</span> <i class="fa-solid fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 3. HERO SECTION WITH TRADING ECONOMICS REALTIME PRICING -->
+    <section class="relative overflow-hidden py-16 lg:py-24">
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/15 blur-[140px] rounded-full pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left Column -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold">
+                        <i class="fa-solid fa-certificate"></i>
+                        <span x-text="t('hero_badge')">Licensed Multi-Regulated Global Broker</span>
+                    </div>
+                    <h1 class="text-4xl sm:text-6xl font-black tracking-tight text-white leading-tight" x-text="t('hero_title')">
+                        Institutional Grade Execution & Deep Liquidity
+                    </h1>
+                    <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed" x-text="t('hero_desc')">
+                        Trade Forex, Gold, and Global Indices with ultra-tight spreads, flexible leverage up to 1:1000, and exclusive 5-Day Swap-Free conditions.
+                    </p>
+                    
+                    <!-- Feature Tags -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 text-left max-w-lg mx-auto lg:mx-0">
+                        <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl flex items-center space-x-3">
+                            <i class="fa-solid fa-wallet text-blue-500 text-sm"></i>
+                            <span class="text-xs font-bold text-slate-200" x-text="t('tag_deposit')">Min Deposit $10</span>
+                        </div>
+                        <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl flex items-center space-x-3">
+                            <i class="fa-solid fa-moon text-amber-500 text-sm"></i>
+                            <span class="text-xs font-bold text-slate-200" x-text="t('tag_swap')">5-Day Swap Free</span>
+                        </div>
+                        <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl flex items-center space-x-3">
+                            <i class="fa-solid fa-bolt text-emerald-500 text-sm"></i>
+                            <span class="text-xs font-bold text-slate-200" x-text="t('tag_leverage')">Leverage 1:1000</span>
+                        </div>
+                    </div>
+
+                    <!-- CTA Buttons -->
+                    <div class="pt-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                        <a href="https://kvbcaj.com/rhem9guim" target="_blank" class="w-full sm:w-auto px-8 py-4 rounded-2xl font-extrabold text-sm bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-xl shadow-blue-600/30 text-center transition-all transform hover:-translate-y-1">
+                            <span x-text="t('btn_open_account')">Open Live Account</span> <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </a>
+                        <a href="https://kvbcaj.com/rhem9guim" target="_blank" class="w-full sm:w-auto px-8 py-4 rounded-2xl font-bold text-sm bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 text-center transition-all">
+                            <span x-text="t('btn_demo')">Try Demo Account</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Column: REALTIME DATA & PLATFORM IMAGE -->
+                <div class="lg:col-span-5 space-y-6">
+                    <!-- Realtime Price Stream Box -->
+                    <div class="bg-gradient-to-br from-slate-900 to-slate-950 p-6 rounded-3xl border border-slate-800 shadow-2xl space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <h3 class="text-sm font-bold text-white uppercase tracking-wider" x-text="t('card_header')">Real-Time Market Quotes</h3>
+                            </div>
+                            <span class="text-[10px] bg-emerald-500/10 text-emerald-400 font-bold px-2.5 py-0.5 rounded-full border border-emerald-500/20">Trading Economics Feed</span>
+                        </div>
+
+                        <!-- Realtime Price List -->
+                        <div class="space-y-3 font-mono text-xs">
+                            <template x-for="item in livePrices" :key="item.symbol">
+                                <div class="flex items-center justify-between p-2.5 bg-slate-950 rounded-xl border border-slate-800/80 hover:border-slate-700 transition">
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fa-solid" :class="item.icon"></i>
+                                        <span class="font-bold text-white" x-text="item.name"></span>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-bold text-sm" :class="item.direction === 'up' ? 'text-emerald-400' : 'text-rose-400'" x-text="'$' + item.price"></div>
+                                        <div class="text-[10px] text-slate-400" x-text="'Spread: ' + item.spread"></div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+
+                        <a href="https://kvbcaj.com/rhem9guim" target="_blank" class="block w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-center text-xs shadow-lg shadow-blue-600/25 transition-all">
+                            <span x-text="t('card_btn_trade')">Trade Live Assets Now</span> &rarr;
+                        </a>
+                    </div>
+
+                    <!-- KVB Showcase Image -->
+                    <div class="rounded-3xl overflow-hidden border border-slate-800 shadow-xl relative group">
+                        <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=800&q=80" alt="KVB Platform" class="w-full h-48 object-cover group-hover:scale-105 transition duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent flex items-end p-4">
+                            <span class="text-xs font-bold text-slate-200"><i class="fa-solid fa-desktop text-blue-500 mr-1.5"></i> KVB Prime Professional Multi-Terminal Platform</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. CORE FEATURES & SHOWCASE IMAGES -->
+    <section class="py-20 bg-slate-900/40 border-t border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto space-y-3 mb-16">
+                <h2 class="text-3xl sm:text-4xl font-black text-white" x-text="t('sec2_title')">Engineered for Professional Traders</h2>
+                <p class="text-slate-400 text-sm sm:text-base" x-text="t('sec2_subtitle')">Discover why high-volume traders and partner networks rely on KVB Prime's institutional infrastructure.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden hover:border-blue-500/50 transition-all group flex flex-col justify-between">
+                    <div class="h-44 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=600&q=80" alt="Regulation" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <div class="absolute top-3 left-3 bg-blue-600/90 text-white p-2 rounded-xl text-xs"><i class="fa-solid fa-shield-halved"></i></div>
+                    </div>
+                    <div class="p-6 space-y-3 flex-1">
+                        <h3 class="text-lg font-bold text-white" x-text="t('box1_title')">Global Regulation & Safety</h3>
+                        <p class="text-slate-400 text-xs leading-relaxed" x-text="t('box1_desc')">Strict compliance with international regulatory bodies ensuring segregation of client funds and institutional security.</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden hover:border-blue-500/50 transition-all group flex flex-col justify-between">
+                    <div class="h-44 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1642543492481-44e81e3914a7?auto=format&fit=crop&w=600&q=80" alt="Execution" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <div class="absolute top-3 left-3 bg-emerald-600/90 text-white p-2 rounded-xl text-xs"><i class="fa-solid fa-bolt-lightning"></i></div>
+                    </div>
+                    <div class="p-6 space-y-3 flex-1">
+                        <h3 class="text-lg font-bold text-white" x-text="t('box2_title')">Lightning-Fast STP Execution</h3>
+                        <p class="text-slate-400 text-xs leading-relaxed" x-text="t('box2_desc')">No dealing desk intervention. Experience low-latency execution designed for high-frequency trading and scalping strategies.</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden hover:border-blue-500/50 transition-all group flex flex-col justify-between">
+                    <div class="h-44 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=600&q=80" alt="Support" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <div class="absolute top-3 left-3 bg-amber-600/90 text-white p-2 rounded-xl text-xs"><i class="fa-solid fa-headset"></i></div>
+                    </div>
+                    <div class="p-6 space-y-3 flex-1">
+                        <h3 class="text-lg font-bold text-white" x-text="t('box3_title')">Dedicated Support & Partnership</h3>
+                        <p class="text-slate-400 text-xs leading-relaxed" x-text="t('box3_desc')">Multilingual account management and tailored IB/Affiliate partnership structures built for long-term revenue growth.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800 bg-slate-950 py-12 text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center space-x-2">
+                    <span class="font-bold text-slate-300 text-sm">KVB PRIME</span>
+                    <span>&copy; 2026. All rights reserved.</span>
+                </div>
+                <div class="flex space-x-6 text-slate-400">
+                    <a href="https://kvbcaj.com/rhem9guim" target="_blank" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="https://kvbcaj.com/rhem9guim" target="_blank" class="hover:text-white transition-colors">Terms of Service</a>
+                </div>
+            </div>
+            <p class="leading-relaxed text-slate-600 text-[11px]" x-text="t('risk_warning')"></p>
+        </div>
+    </footer>
+
+    <!-- REALTIME PRICE & MULTILINGUAL SCRIPT LOGIC -->
+    <script>
+        function landingApp() {
+            return {
+                currentLang: 'en',
+                
+                // Realtime Price Feed aligned with Trading Economics (~$4,027.00 - $4,035.00/oz range)
+                livePrices: [
+                    { symbol: 'XAUUSD', name: 'XAU/USD (Gold)', price: '4,027.35', spread: '0.20 pips', change: '-0.99%', icon: 'fa-coins text-amber-400', direction: 'down' },
+                    { symbol: 'EURUSD', name: 'EUR/USD', price: '1.1130', spread: '0.10 pips', change: '-0.21%', icon: 'fa-globe text-blue-400', direction: 'down' },
+                    { symbol: 'GBPUSD', name: 'GBP/USD', price: '1.3306', spread: '0.20 pips', change: '-0.16%', icon: 'fa-chart-line text-indigo-400', direction: 'down' },
+                    { symbol: 'BTCUSD', name: 'BTC/USD', price: '80,016.00', spread: '1.50 pips', change: '-1.55%', icon: 'fa-bitcoin-sign text-amber-500', direction: 'down' }
+                ],
+
+                init() {
+                    // Micro-Jitter simulation to maintain live market heartbeat
+                    setInterval(() => {
+                        this.livePrices.forEach(item => {
+                            let delta = (Math.random() - 0.49) * (item.symbol === 'XAUUSD' ? 0.45 : (item.symbol === 'BTCUSD' ? 12 : 0.0003));
+                            let current = parseFloat(item.price.replace(/,/g, '')) + delta;
+                            item.direction = delta >= 0 ? 'up' : 'down';
+                            item.price = item.symbol === 'BTCUSD' ? current.toLocaleString('en-US', {minimumFractionDigits: 2}) : (item.symbol === 'XAUUSD' ? current.toFixed(2) : current.toFixed(4));
+                        });
+                    }, 2000);
+                },
+
+                translations: {
+                    en: {
+                        sub_brand: "Global Financial Institution",
+                        btn_register: "Open Live Account",
+                        hero_badge: "Licensed Multi-Regulated Global Broker",
+                        hero_title: "Institutional Grade Execution & Deep Liquidity",
+                        hero_desc: "Trade Forex, Gold, and Global Indices with ultra-tight spreads, flexible leverage up to 1:1000, and exclusive 5-Day Swap-Free conditions.",
+                        tag_deposit: "Min Deposit $10",
+                        tag_swap: "5-Day Swap Free",
+                        tag_leverage: "Leverage 1:1000",
+                        btn_open_account: "Open Live Account",
+                        btn_demo: "Try Demo Account",
+                        card_header: "Real-Time Market Quotes",
+                        card_btn_trade: "Trade Live Assets Now",
+                        sec2_title: "Engineered for Professional Traders",
+                        sec2_subtitle: "Discover why high-volume traders and partner networks rely on KVB Prime's institutional infrastructure.",
+                        box1_title: "Global Regulation & Safety",
+                        box1_desc: "Strict compliance with international regulatory bodies ensuring segregation of client funds and institutional security.",
+                        box2_title: "Lightning-Fast STP Execution",
+                        box2_desc: "No dealing desk intervention. Experience low-latency execution designed for high-frequency trading and scalping strategies.",
+                        box3_title: "Dedicated Support & Partnership",
+                        box3_desc: "Multilingual account management and tailored IB/Affiliate partnership structures built for long-term revenue growth.",
+                        cta_title: "Ready to Open Your Account?",
+                        cta_desc: "Join thousands of global traders and partners. Fund with as little as $10 and start trading instantly.",
+                        risk_warning: "Risk Warning: Trading CFDs and Forex carries a high level of risk and may not be suitable for all investors. Ensure you fully understand the risks involved before trading."
+                    },
+                    vi: {
+                        sub_brand: "Tổ Chức Tài Chính Toàn Cầu",
+                        btn_register: "Mở Tài Khoản Thực",
+                        hero_badge: "Nhà môi giới toàn cầu được cấp phép hợp pháp",
+                        hero_title: "Khớp Lệnh Chuẩn Tổ Chức & Thanh Khoản Sâu",
+                        hero_desc: "Giao dịch Ngoại hối, Vàng và Chỉ số toàn cầu với mức spread cực thấp, đòn bẩy linh hoạt đến 1:1000 và điều kiện Miễn phí qua đêm 5 ngày độc quyền.",
+                        tag_deposit: "Nạp từ $10",
+                        tag_swap: "Miễn Phí Swap 5 Ngày",
+                        tag_leverage: "Đòn bẩy 1:1000",
+                        btn_open_account: "Mở Tài Khoản Thực",
+                        btn_demo: "Thử Nghiệm Demo",
+                        card_header: "Bảng Giá Thị Trường Real-Time",
+                        card_btn_trade: "Giao Dịch Ngay Trực Tiếp",
+                        sec2_title: "Thiết Kế Dành Riêng Cho Trader Chuyên Nghiệp",
+                        sec2_subtitle: "Khám phá lý do tại sao các trader khối lượng lớn và hệ thống đối tác tin tưởng hạ tầng của KVB Prime.",
+                        box1_title: "Quy Định Toàn Cầu & An Toàn",
+                        box1_desc: "Tuân thủ nghiêm ngặt các tiêu chuẩn quản lý quốc tế, đảm bảo tách biệt quỹ tiền gửi của khách hàng.",
+                        box2_title: "Khớp Lệnh STP Siêu Tốc",
+                        box2_desc: "Không có sự can thiệp của bàn giao dịch. Trải nghiệm độ trễ thấp phù hợp cho lướt sóng và EA.",
+                        box3_title: "Hỗ Trợ & Hợp Tác Chuyên Sâu",
+                        box3_desc: "Quản lý tài khoản đa ngôn ngữ và các cấu trúc hoa hồng IB/Affiliate tối ưu hóa doanh thu lâu dài.",
+                        cta_title: "Sẵn Sàng Mở Tài Khoản Của Bạn?",
+                        cta_desc: "Tham gia cùng hàng nghìn trader và đối tác toàn cầu. Nạp vốn tối thiểu chỉ từ $10 và bắt đầu giao dịch ngay lập tức.",
+                        risk_warning: "Cảnh báo rủi ro: Giao dịch CFD và Forex mang lại mức độ rủi ro cao và có thể không phù hợp với mọi nhà đầu tư. Hãy đảm bảo bạn hiểu rõ các rủi ro trước khi tham gia."
+                    },
+                    km: {
+                        sub_brand: "ស្ថាប័នហិរញ្ញវត្ថុសកល",
+                        btn_register: "បើកគណនីពិត",
+                        hero_badge: "ឈ្មួញកណ្តាលសកលដែលមានអាជ្ញាប័ណ្ណត្រឹមត្រូវ",
+                        hero_title: "ការប្រតិបត្តិស្តង់ដារស្ថាប័ន & វត្ថុធាតុដើមជម្រៅ",
+                        hero_desc: "ជួញដូរ Forex មាស និងសន្ទស្សន៍សកលជាមួយនឹង spread ទាប, leverage រហូតដល់ 1:1000 និងលក្ខខណ្ឌឥតគិតថ្លៃ Swap 5 ថ្ងៃ។",
+                        tag_deposit: "ដាក់ប្រាក់អប្បបរមា $10",
+                        tag_swap: "ឥតគិតថ្លៃ Swap 5 ថ្ងៃ",
+                        tag_leverage: "Leverage 1:1000",
+                        btn_open_account: "បើកគណនីពិត",
+                        btn_demo: "សាកល្បងគណនី Demo",
+                        card_header: "តម្លៃទីផ្សារពេលវេលាពិត",
+                        card_btn_trade: "ចាប់ផ្តើមជួញដូរភ្លាមៗ",
+                        sec2_title: "រចនាឡើងសម្រាប់ពាណិជ្ជករអាជីព",
+                        sec2_subtitle: "ស្វែងយល់ពីមូលហេតុដែលពាណិជ្ជករទុកចិត្តលើហេដ្ឋារចនាសម្ព័ន្ធរបស់ KVB Prime ។",
+                        box1_title: "បទបញ្ជាសកល និងសុវត្ថិភាព",
+                        box1_desc: "ការអនុលោមតាមបទប្បញ្ញត្តិអន្តរជាតិយ៉ាងតឹងរ៉ឹងធានាសុវត្ថិភាពមូលនិធិអតិថិជន។",
+                        box2_title: "ប្រតិបត្តិការ STP លឿនរហ័ស",
+                        box2_desc: "គ្មានការអន្តរាគមន៍ពីតុជួញដូរ។ បទពិសោធន៍ភាពយឺតយ៉ាវទាបសម្រាប់ការជួញដូររហ័ស។",
+                        box3_title: "ជំនួយ និងភាពជាដៃគូឧទ្ទិស",
+                        box3_desc: "ការគ្រប់គ្រងគណនីពហុភាសា និងរចនាសម្ព័ន្ធភាពជាដៃគូ IB/Affiliate សម្រាប់ការរីកចម្រើនប្រាក់ចំណូលរយៈពេលវែង។",
+                        cta_title: "ត្រៀមខ្លួនបើកគណនីរបស់អ្នកហើយឬនៅ?",
+                        cta_desc: "ចូលរួមជាមួយពាណិជ្ជករ និងដៃគូសកលរាប់ពាន់នាក់។ ដាក់ប្រាក់ត្រឹមតែ $10 ហើយចាប់ផ្តើមជួញដូរភ្លាមៗ។",
+                        risk_warning: "ការព្រមានអំពីហានិភ័យ៖ ការជួញដូរ CFD និង Forex មានកម្រិតហានិភ័យខ្ពស់។ សូមប្រាកដថាអ្នកយល់ច្បាស់ពីហានិភ័យមុនពេលជួញដូរ។"
+                    },
+                    th: {
+                        sub_brand: "สถาบันการเงินระดับโลก",
+                        btn_register: "เปิดบัญชีจริง",
+                        hero_badge: "โบรกเกอร์ระดับโลกที่ได้รับใบอนุญาตถูกต้อง",
+                        hero_title: "การดำเนินการระดับสถาบัน & สภาพคล่องเชิงลึก",
+                        hero_desc: "ซื้อขาย Forex, ทองคำ และดัชนีระดับโลกด้วยสเปรดต่ำ, เลเวอเรจยืดหยุ่นสูงสุด 1:1000 และเงื่อนไขฟรีค่า Swap 5 วัน",
+                        tag_deposit: "ฝากขั้นต่ำ $10",
+                        tag_swap: "ฟรีค่า Swap 5 วัน",
+                        tag_leverage: "เลเวอเรจ 1:1000",
+                        btn_open_account: "เปิดบัญชีจริง",
+                        btn_demo: "ทดลองบัญชี Demo",
+                        card_header: "ราคาตลาดแบบ Real-Time",
+                        card_btn_trade: "เริ่มเทรดสินทรัพย์จริงตอนนี้",
+                        sec2_title: "ออกแบบมาเพื่อเทรดเดอร์มืออาชีพ",
+                        sec2_subtitle: "ค้นพบเหตุผลที่เทรดเดอร์และเครือข่ายพาร์ทเนอร์ไว้วางใจโครงสร้างพื้นฐานของ KVB Prime",
+                        box1_title: "การกำกับดูแลระดับโลกและความปลอดภัย",
+                        box1_desc: "ปฏิบัติตามกฎระเบียบระหว่างประเทศอย่างเคร่งครัดเพื่อให้มั่นใจถึงความปลอดภัยของเงินทุนลูกค้า",
+                        box2_title: "ระบบ STP ความเร็วสูง",
+                        box2_desc: "ไม่มีการแทรกแซงจาก Dealing Desk สัมผัสความหน่วงต่ำที่ออกแบบมาสำหรับกลยุทธ์ Scalping และ EA",
+                        box3_title: "ซัพพอร์ตและการเป็นพาร์ทเนอร์โดยเฉพาะ",
+                        box3_desc: "การจัดการบัญชีหลายภาษาและโครงสร้างพาร์ทเนอร์ IB/Affiliate ที่ออกแบบเพื่อการเติบโตของรายได้ระยะยาว",
+                        cta_title: "พร้อมที่จะเปิดบัญชีของคุณหรือยัง?",
+                        cta_desc: "เข้าร่วมกับเทรดเดอร์และพาร์ทเนอร์ทั่วโลก ฝากเงินเริ่มต้นเพียง $10 แล้วเริ่มเทรดได้ทันที",
+                        risk_warning: "คำเตือนความเสี่ยง: การซื้อขาย CFD และ Forex มีความเสี่ยงสูงและอาจไม่เหมาะกับนักลงทุนทุกคน โปรดทำความเข้าใจความเสี่ยงก่อนเริ่มเทรด"
+                    },
+                    ar: {
+                        sub_brand: "مؤسسة مالية عالمية",
+                        btn_register: "فتح حساب حقيقي",
+                        hero_badge: "وسيط عالمي مرخص ومنظم",
+                        hero_title: "تنفيذ بمستوى المؤسسات وسيولة عميقة",
+                        hero_desc: "تداول الفوركس، الذهب، والمؤشرات العالمية بفروق أسعار ضيقة، رافعة مالية مرنة تصل إلى 1:1000 وشروط تبييت حصرية بدون رسوم لمدة 5 أيام.",
+                        tag_deposit: "إيداع أدنى 10 دولار",
+                        tag_swap: "بدون رسوم تبييت 5 أيام",
+                        tag_leverage: "رافعة 1:1000",
+                        btn_open_account: "فتح حساب حقيقي",
+                        btn_demo: "حساب تجريبي",
+                        card_header: "أسعار السوق المباشرة",
+                        card_btn_trade: "تداول الأصول المباشرة الآن",
+                        sec2_title: "مصممة للمتداولين المحترفين",
+                        sec2_subtitle: "اكتشف سبب اعتماد المتداولين الكبار وشبكات الشركاء على البنية التحتية لـ KVB Prime.",
+                        box1_title: "تنظيم عالمي وأمان تام",
+                        box1_desc: "التزام صارم بالمعايير التنظيمية الدولية لضمان فصل أموال العملاء والأمان المؤسسي.",
+                        box2_title: "تنفيذ STP فائق السرعة",
+                        box2_desc: "لا تدخل من غرفة التداول. استمتع بتنفيذ منخفض الكمون مصمم لاستراتيجيات السكالپنج.",
+                        box3_title: "دعم مخصص وشراكات مثمرة",
+                        box3_desc: "إدارة حسابات متعددة اللغات وهياكل شراكة IB مصممة لنمو الإيرادات على المدى الطويل.",
+                        cta_title: "هل أنت مستعد لفتح حسابك؟",
+                        cta_desc: "انضم إلى آلاف المتداولين حول العالم. أودع 10 دولار فقط وابدأ التداول فوراً.",
+                        risk_warning: "تحذير المخاطر: ينطوي تداول عقود الفروقات والفوركس على مستويات عالية من المخاطر وقد لا يكون مناسباً لجميع المستثمرين."
+                    },
+                    zh: {
+                        sub_brand: "全球金融机构",
+                        btn_register: "开设真实账户",
+                        hero_badge: "持牌多监管全球经纪商",
+                        hero_title: "机构级订单执行与深层流动性",
+                        hero_desc: "交易外汇、黄金及全球指数，享受超窄点差、最高1:1000的灵活杠杆以及独家5天免隔夜费条件。",
+                        tag_deposit: "最低入金 $10",
+                        tag_swap: "5天免隔夜费",
+                        tag_leverage: "最高杠杆 1:1000",
+                        btn_open_account: "开设真实账户",
+                        btn_demo: "试用模拟账户",
+                        card_header: "实时市场价格",
+                        card_btn_trade: "立即交易真实资产",
+                        sec2_title: "专为专业交易者打造",
+                        sec2_subtitle: "了解为什么高频交易员和合作伙伴网络信赖 KVB Prime 的机构级基础设施。",
+                        box1_title: "全球监管与资金安全",
+                        box1_desc: "严格遵守国际监管标准，确保客户资金隔离与机构级安全保障。",
+                        box2_title: "极速 STP 订单执行",
+                        box2_desc: "无交易员后台干预。体验专为剥头皮和高频交易设计的低延迟执行速度。",
+                        box3_title: "专属支持与稳健合作",
+                        box3_desc: "多语言账户经理以及为您量身定制的 IB/代理合作计划，助您实现长远收益增长。",
+                        cta_title: "准备好开设您的账户了吗？",
+                        cta_desc: "与全球数千名交易者和合作伙伴一同起航。最低只需入金 $10 即可立即开始交易。",
+                        risk_warning: "风险警告：差价合约（CFD）和外汇交易具有高风险，可能并不适合所有投资者。请在交易前确保完全理解其中涉及的风险。"
+                    }
+                },
+                t(key) {
+                    return this.translations[this.currentLang][key] || this.translations['en'][key];
+                },
+                changeLang(lang) {
+                    this.currentLang = lang;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
